@@ -1,0 +1,36 @@
+version: "3"
+
+services:
+  makemkv:
+    image: jlesage/makemkv
+    container_name: makemkv
+    # ports:
+    # - IP_ADDRESS:5800:5800/tcp
+    # https://github.com/jlesage/docker-makemkv?tab=readme-ov-file#environment-variables
+    environment:
+      - VNC_PASSWORD=${VNC_PASSWORD}
+      - TZ=${TZ}
+    volumes:
+      - ./volumes/config:/config:rw
+      - /mnt/blurays:/output:rw
+    devices:
+      # Update to match drive
+      - /dev/sr0:/dev/sr0
+      - /dev/sg0:/dev/sg0
+    restart: unless-stopped
+
+  nginx:
+    image: lscr.io/linuxserver/nginx:latest
+    container_name: makemkv-nginx
+    depends_on:
+      - makemkv
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+    volumes:
+      - ./volumes/nginx/certs:/certs
+      - ./volumes/nginx/config:/config
+    ports:
+      - ${CLIENT_LAN_IP}:443:443
+    restart: unless-stopped
