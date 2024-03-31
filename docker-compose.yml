@@ -1,5 +1,3 @@
-version: "3"
-
 services:
   makemkv:
     image: jlesage/makemkv
@@ -12,7 +10,7 @@ services:
       - TZ=${TZ}
     volumes:
       - ./volumes/config:/config:rw
-      - /mnt/blurays:/output:rw
+      - /mnt/nas-blurays:/output:rw
     devices:
       # Update to match drive
       - /dev/sr0:/dev/sr0
@@ -32,5 +30,5 @@ services:
       - ./volumes/nginx/certs:/certs
       - ./volumes/nginx/config:/config
     ports:
-      - ${CLIENT_LAN_IP}:443:443
+      - ${CLIENT_IP}:443:443
     restart: unless-stopped
